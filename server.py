@@ -8,32 +8,35 @@ from flask import Flask, flash, request
 from config import settings
 
 
+app = Flask(__name__)
+
+
 def unzip(zip_file, extraction_path):
     """
     code to unzip files
     """
-    print "[INFO] Unzipping"
+    print("[INFO] Unzipping")
     try:
         files = []
         with zipfile.ZipFile(zip_file, "r") as z:
-            for fileinfo in z.infolist():
-                filename = fileinfo.filename
-                dat = z.open(filename, "r")
-                files.append(filename)
-                outfile = os.path.join(extraction_path, filename)
+            for file_info in z.infolist():
+                file_name = file_info.filename
+                dat = z.open(file_name, "r")
+                files.append(file_name)
+                outfile = os.path.join(extraction_path, file_name)
                 if not os.path.exists(os.path.dirname(outfile)):
                     try:
                         os.makedirs(os.path.dirname(outfile))
                     except OSError as exc:  # Guard against race condition
                         if exc.errno != errno.EEXIST:
-                            print "\n[WARN] OS Error: Race Condition"
+                            print("\n[WARN] OS Error: Race Condition")
                 if not outfile.endswith("/"):
                     with io.open(outfile, mode='wb') as f:
                         f.write(dat.read())
                 dat.close()
         return files
     except Exception as e:
-        print "[ERROR] Unzipping Error" + str(e)
+        print("[ERROR] Unzipping Error" + str(e))
 
 
 def html_escape(text):
@@ -52,7 +55,6 @@ def allowed_file(filename):
     """Allowed File"""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in settings.ALLOWED_EXTS
 
-app = Flask(__name__)
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -68,7 +70,7 @@ def upload():
         if file_uploaded.filename == '':
             flash('No selected file')
             return "No File Selected!"
-        if file and allowed_file(file_uploaded.filename):
+        if file_uploaded and allowed_file(file_uploaded.filename):
             filename = secure_filename(file_uploaded.filename)
             write_to_file = os.path.join(extraction_path, filename)
             file_uploaded.save(write_to_file)
@@ -82,11 +84,14 @@ def main():
     html = '''
     <form enctype="multipart/form-data" action="/upload" method="POST">
     Choose a file to upload:
+    <br><br>
     <input name="file" type="file" accept=".zip,.apk" />
+    <br><hr><br>
     <input type="submit" value="Upload" />
     </form>
     '''
     return html
+
 
 if __name__ == '__main__':
     app.secret_key = 'super secret key'
