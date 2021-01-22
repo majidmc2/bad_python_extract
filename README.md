@@ -22,4 +22,4 @@ This will start the server at `http://0.0.0.0:6005`
 
 > python3 paload.py
 
-It creates **payload.zip** for inject "print('--------- Injection ---------')" in to **config/__init__.py**.
+It creates **payload.zip** for inject "print('--------- Injection ---------')" in to config/__init__.py.
