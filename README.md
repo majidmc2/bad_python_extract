@@ -1,4 +1,4 @@
-# bad_python_extract
+# Bad Python Extract
 A vulnerable web application written in Python3 Flask to demonstrate insecure file extraction.
 
 ### Usage
